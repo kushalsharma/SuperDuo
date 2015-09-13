@@ -2,27 +2,21 @@ package in.kushalsharma.alexandria;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import in.kushalsharma.fragments.BlankFragment;
 import in.kushalsharma.fragments.ExploreFragment;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ExploreFragment.MenuCallback {
 
+    private ExploreFragment fragmentScan;
+    private BlankFragment fragmentLibrary;
+    private BlankFragment fragmentAbout;
     private DrawerLayout mDrawerLayout;
 
     @Override
@@ -30,14 +24,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        fragmentScan = new ExploreFragment();
+        fragmentLibrary = new BlankFragment();
+        fragmentAbout = new BlankFragment();
 
-        final ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-            ab.setDisplayHomeAsUpEnabled(true);
-        }
+        fragmentScan.setMenuCallBack(this);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -46,15 +37,7 @@ public class MainActivity extends AppCompatActivity {
             setupDrawerContent(navigationView);
         }
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        if (viewPager != null) {
-            setupViewPager(viewPager);
-        }
-
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        if (viewPager != null)
-            tabLayout.setupWithViewPager(viewPager);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentScan).commit();
     }
 
     @Override
@@ -69,21 +52,8 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void setupViewPager(ViewPager viewPager) {
-        Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new ExploreFragment(), "Category 1");
-        adapter.addFragment(new ExploreFragment(), "Category 2");
-        adapter.addFragment(new ExploreFragment(), "Category 3");
-        viewPager.setAdapter(adapter);
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -92,39 +62,27 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
+
+                        switch (menuItem.getItemId()) {
+                            case R.id.nav_scan:
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentScan).commit();
+                                break;
+                            case R.id.nav_library:
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentLibrary).commit();
+                                break;
+                            case R.id.nav_about:
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentAbout).commit();
+                                break;
+                        }
+
                         mDrawerLayout.closeDrawers();
                         return true;
                     }
                 });
     }
 
-
-    static class Adapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragments = new ArrayList<>();
-        private final List<String> mFragmentTitles = new ArrayList<>();
-
-        public Adapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragments.add(fragment);
-            mFragmentTitles.add(title);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragments.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragments.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitles.get(position);
-        }
+    @Override
+    public void menuPressed() {
+        mDrawerLayout.openDrawer(GravityCompat.START);
     }
 }

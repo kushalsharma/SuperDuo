@@ -3,10 +3,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_explore"
-            android:title="@string/explore" />
-        <item
             android:id="@+id/nav_scan"
             android:icon="@drawable/ic_scan"
             android:title="@string/add_book" />
