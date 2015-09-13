@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 /**
  * Created by kushal on 06/09/15.
+ * Book Class
  */
 
 public class Book implements Parcelable {
