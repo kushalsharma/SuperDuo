@@ -10,14 +10,17 @@ import android.view.MenuItem;
 
 import in.kushalsharma.fragments.BlankFragment;
 import in.kushalsharma.fragments.ExploreFragment;
+import in.kushalsharma.fragments.LibraryFragment;
 
 
-public class MainActivity extends AppCompatActivity implements ExploreFragment.MenuCallback {
+public class MainActivity extends AppCompatActivity implements ExploreFragment.MenuCallback, LibraryFragment.MenuCallback {
 
     private ExploreFragment fragmentScan;
-    private BlankFragment fragmentLibrary;
+    private LibraryFragment fragmentLibrary;
     private BlankFragment fragmentAbout;
     private DrawerLayout mDrawerLayout;
+
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +28,19 @@ public class MainActivity extends AppCompatActivity implements ExploreFragment.M
         setContentView(R.layout.activity_main);
 
         fragmentScan = new ExploreFragment();
-        fragmentLibrary = new BlankFragment();
+        fragmentLibrary = new LibraryFragment();
         fragmentAbout = new BlankFragment();
 
         fragmentScan.setMenuCallBack(this);
+        fragmentLibrary.setMenuCallBack(this);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (findViewById(R.id.drawer_layout) != null) {
+            mTwoPane = false;
+            mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        } else {
+            mTwoPane = true;
+        }
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
@@ -74,8 +84,9 @@ public class MainActivity extends AppCompatActivity implements ExploreFragment.M
                                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentAbout).commit();
                                 break;
                         }
-
-                        mDrawerLayout.closeDrawers();
+                        if (!mTwoPane) {
+                            mDrawerLayout.closeDrawers();
+                        }
                         return true;
                     }
                 });
@@ -83,6 +94,15 @@ public class MainActivity extends AppCompatActivity implements ExploreFragment.M
 
     @Override
     public void menuPressed() {
-        mDrawerLayout.openDrawer(GravityCompat.START);
+        if (!mTwoPane) {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
+    }
+
+    @Override
+    public void libraryMenuPressed() {
+        if (!mTwoPane) {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
     }
 }

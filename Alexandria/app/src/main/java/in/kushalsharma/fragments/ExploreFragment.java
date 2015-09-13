@@ -72,7 +72,7 @@ public class ExploreFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_explore, container, false);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        toolbar.setTitle(getActivity().getResources().getString(R.string.app_name));
+        toolbar.setTitle(getActivity().getResources().getString(R.string.add_book));
 
         toolbar.setNavigationIcon(R.drawable.ic_menu);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -276,6 +276,7 @@ public class ExploreFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 progressBar.setVisibility(View.INVISIBLE);
+                fab.hide();
                 showSnackBar("Something went wrong! Please check the internet connection and try again.");
             }
         });
@@ -313,11 +314,6 @@ public class ExploreFragment extends Fragment {
         }
 
     }
-
-    public void showSnackBarWithoutAction(String msg) {
-        Snackbar.make(mRecyclerView, msg, Snackbar.LENGTH_LONG).show();
-    }
-
 
     public void setMenuCallBack(MenuCallback callback) {
         this.menuCallback = callback;

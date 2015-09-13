@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="in.kushalsharma.alexandria">
+    package="in.kushalsharma.alexandria" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -9,11 +9,11 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,5 +25,11 @@
             android:name="in.kushalsharma.utils.BookContentProvider"
             android:authorities="in.kushalsharma.alexandria.provider"
             android:exported="false" />
+
+        <activity
+            android:name=".BookDetailActivity"
+            android:label="@string/title_activity_book_detail" >
+        </activity>
     </application>
+
 </manifest>
