@@ -1,38 +1,47 @@
 package in.kushalsharma.alexandria;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 
-import in.kushalsharma.fragments.BlankFragment;
+import in.kushalsharma.fragments.AboutFragment;
 import in.kushalsharma.fragments.ExploreFragment;
 import in.kushalsharma.fragments.LibraryFragment;
 
 
-public class MainActivity extends AppCompatActivity implements ExploreFragment.MenuCallback, LibraryFragment.MenuCallback {
+public class MainActivity extends AppCompatActivity implements ExploreFragment.MenuCallback, LibraryFragment.MenuCallback, AboutFragment.MenuCallback {
 
     private ExploreFragment fragmentScan;
     private LibraryFragment fragmentLibrary;
-    private BlankFragment fragmentAbout;
+    private AboutFragment fragmentAbout;
     private DrawerLayout mDrawerLayout;
 
     private boolean mTwoPane;
+
+    private int fragmentState;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPreferences = getSharedPreferences("alexandria", Context.MODE_PRIVATE);
+
+
         fragmentScan = new ExploreFragment();
         fragmentLibrary = new LibraryFragment();
-        fragmentAbout = new BlankFragment();
+        fragmentAbout = new AboutFragment();
 
         fragmentScan.setMenuCallBack(this);
         fragmentLibrary.setMenuCallBack(this);
+        fragmentAbout.setMenuCallBack(this);
 
         if (findViewById(R.id.drawer_layout) != null) {
             mTwoPane = false;
@@ -41,30 +50,40 @@ public class MainActivity extends AppCompatActivity implements ExploreFragment.M
             mTwoPane = true;
         }
 
+        if (savedInstanceState != null) {
+            fragmentState = savedInstanceState.getInt("fragmentState");
+        } else {
+            fragmentState = sharedPreferences.getInt("startFragmentState", 0);
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
+        setFragmentFromState(fragmentState);
+    }
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentScan).commit();
+    private void setFragmentFromState(int fragmentState) {
+        switch (fragmentState) {
+            case 0:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentScan).commit();
+                break;
+            case 1:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentLibrary).commit();
+                break;
+            case 2:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentAbout).commit();
+                break;
+        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("fragmentState", fragmentState);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        return super.onOptionsItemSelected(item);
-    }
 
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
@@ -72,20 +91,35 @@ public class MainActivity extends AppCompatActivity implements ExploreFragment.M
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
-
                         switch (menuItem.getItemId()) {
                             case R.id.nav_scan:
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentScan).commit();
+                                fragmentState = 0;
+                                setFragmentFromState(fragmentState);
+
+                                if (!mTwoPane) {
+                                    mDrawerLayout.closeDrawers();
+                                }
                                 break;
                             case R.id.nav_library:
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentLibrary).commit();
+                                fragmentState = 1;
+                                setFragmentFromState(fragmentState);
+
+                                if (!mTwoPane) {
+                                    mDrawerLayout.closeDrawers();
+                                }
                                 break;
                             case R.id.nav_about:
-                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_placeholder, fragmentAbout).commit();
+                                fragmentState = 2;
+                                setFragmentFromState(fragmentState);
+
+                                if (!mTwoPane) {
+                                    mDrawerLayout.closeDrawers();
+                                }
                                 break;
-                        }
-                        if (!mTwoPane) {
-                            mDrawerLayout.closeDrawers();
+                            case R.id.nav_setting:
+                                Intent mIntent = new Intent(MainActivity.this, SettingsActivity.class);
+                                startActivity(mIntent);
+                                break;
                         }
                         return true;
                     }
@@ -101,6 +135,13 @@ public class MainActivity extends AppCompatActivity implements ExploreFragment.M
 
     @Override
     public void libraryMenuPressed() {
+        if (!mTwoPane) {
+            mDrawerLayout.openDrawer(GravityCompat.START);
+        }
+    }
+
+    @Override
+    public void aboutMenuPressed() {
         if (!mTwoPane) {
             mDrawerLayout.openDrawer(GravityCompat.START);
         }

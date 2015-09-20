@@ -8,8 +8,18 @@
     <string name="my_library">My Library</string>
     <string name="about">About</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="read_more">Read More</string>
     <string name="title_activity_book_detail">Book Detail</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="setting">Settings</string>
+    <string name="default_screen">Default Home Screen</string>
+
+    <string name="about_text">This application gets book information from a Google API. All titles, cover images, and author information come from there.
+    The original version of this app was built by Sascha Jaschke, and a modified version is given to students in the Udacity Android Nanodegree program. And this is my version of
+        the same app! ^.^</string>
+
+    <string-array name="home_array">
+        <item>Scan/Add Book</item>
+        <item>My Library</item>
+    </string-array>
 </resources>
