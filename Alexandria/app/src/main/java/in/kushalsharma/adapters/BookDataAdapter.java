@@ -41,6 +41,7 @@ public class BookDataAdapter extends RecyclerView.Adapter<BookDataAdapter.BookVi
     @Override
     public void onBindViewHolder(BookViewHolder bookViewHolder, int i) {
         bookViewHolder.getThumbnailImageView().setImageUrl(book.getThumbnail(), AppController.getInstance().getImageLoader());
+        bookViewHolder.getThumbnailImageView().setErrorImageResId(R.drawable.ic_error);
         bookViewHolder.getTitleView().setText(book.getTitle());
         bookViewHolder.getAuthorView().setText("by " + book.getAuthors());
         bookViewHolder.getPublisherView().setText("Publisher - " + book.getPublisher());

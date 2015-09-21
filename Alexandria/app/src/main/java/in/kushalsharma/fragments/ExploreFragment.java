@@ -141,136 +141,195 @@ public class ExploreFragment extends Fragment {
 
                 progressBar.setVisibility(View.INVISIBLE);
 
+                book = new Book();
+                JSONArray itemArray;
+                JSONObject itemObject;
+                String id = null;
+                String selfLink = null;
+                JSONObject volumeInfoObject = null;
                 try {
-                    JSONArray itemArray = response.getJSONArray("items");
-                    JSONObject itemObject = itemArray.getJSONObject(0);
-
-                    String id = itemObject.getString("id");
-                    String selfLink = itemObject.getString("selfLink");
-
-                    JSONObject volumeInfoObject = itemObject.getJSONObject("volumeInfo");
-                    String title = volumeInfoObject.getString("title");
-
-                    JSONArray authorsArray = volumeInfoObject.getJSONArray("authors");
-                    String authors = "";
-
-                    if (authorsArray.length() == 1) {
-                        authors = authorsArray.getString(0);
-                    } else {
-                        for (int i = 0; i < authorsArray.length(); i++) {
-                            if (i != authorsArray.length())
-                                authors += authorsArray.getString(i) + ", ";
-                            else authors += authorsArray.getString(i) + ".";
-                        }
-                    }
-
-                    String publisher = volumeInfoObject.getString("publisher");
-                    String publishDate = volumeInfoObject.getString("publishedDate");
-                    String description = volumeInfoObject.getString("description");
-                    String pageCount = volumeInfoObject.getString("pageCount");
-
-                    JSONArray categoriesArray = volumeInfoObject.getJSONArray("categories");
-                    String categories = "";
-
-                    if (categoriesArray.length() == 1) {
-                        categories = categoriesArray.getString(0);
-                    } else {
-                        for (int i = 0; i < categoriesArray.length(); i++) {
-                            if (i != categoriesArray.length())
-                                categories += categoriesArray.getString(i) + ", ";
-                            else categories += categoriesArray.getString(i) + ".";
-                        }
-                    }
-
-                    String averageRating = volumeInfoObject.getString("averageRating");
-                    String ratingsCount = volumeInfoObject.getString("ratingsCount");
-
-                    JSONObject imageLinksObject = volumeInfoObject.getJSONObject("imageLinks");
-
-                    String smallThumbnail = imageLinksObject.getString("smallThumbnail");
-                    String thumbnail = imageLinksObject.getString("thumbnail");
-
-                    String language = volumeInfoObject.getString("language");
-
-                    book = new Book();
-                    book.setId(id);
-                    book.setSelfLink(selfLink);
-                    book.setTitle(title);
-                    book.setAuthors(authors);
-                    book.setPublisher(publisher);
-                    book.setPublishedDate(publishDate);
-                    book.setDescription(description);
-                    book.setPageCount(pageCount);
-                    book.setCategories(categories);
-                    book.setAverageRating(averageRating);
-                    book.setRatingsCount(ratingsCount);
-                    book.setSmallThumbnail(smallThumbnail);
-                    book.setThumbnail(thumbnail);
-                    book.setLanguage(language);
-
-                    mAdapter = new BookDataAdapter(book, getActivity());
-                    mLayoutManager = new LinearLayoutManager(getActivity());
-                    mRecyclerView.setAdapter(mAdapter);
-                    mRecyclerView.setLayoutManager(mLayoutManager);
-                    mRecyclerView.setVisibility(View.VISIBLE);
-
-                    boolean isBookInDB = ContentProviderHelperMethods
-                            .isBookInDatabase(getActivity(),
-                                    String.valueOf(book.getId()));
-
-                    if (isBookInDB) {
-                        fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like));
-                    } else {
-                        fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like_outline));
-                    }
-
-                    fab.show();
-
-                    fab.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            boolean isBookInDB = ContentProviderHelperMethods
-                                    .isBookInDatabase(getActivity(),
-                                            String.valueOf(book.getId()));
-                            if (isBookInDB) {
-                                Uri contentUri = BookContentProvider.CONTENT_URI;
-                                getActivity().getContentResolver().delete(contentUri, "id=?", new String[]{String.valueOf(book.getId())});
-                                Snackbar.make(view, "Book removed from library!", Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null).show();
-                                fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like_outline));
-
-                            } else {
-                                ContentValues values = new ContentValues();
-                                values.put(DatabaseHelper.KEY_ID, book.getId());
-                                values.put(DatabaseHelper.KEY_SELF_LINK, book.getTitle());
-                                values.put(DatabaseHelper.KEY_TITLE, book.getTitle());
-                                values.put(DatabaseHelper.KEY_AUTHORS, book.getAuthors());
-                                values.put(DatabaseHelper.KEY_PUBLISHER, book.getPublisher());
-                                values.put(DatabaseHelper.KEY_PUBLISH_DATE, book.getPublishedDate());
-                                values.put(DatabaseHelper.KEY_DESCRIPTION, book.getDescription());
-                                values.put(DatabaseHelper.KEY_PAGE_COUNT, book.getPageCount());
-                                values.put(DatabaseHelper.KEY_CATEGORIES, book.getCategories());
-                                values.put(DatabaseHelper.KEY_AVERAGE_RATING, book.getAverageRating());
-                                values.put(DatabaseHelper.KEY_RATINGS_COUNT, book.getRatingsCount());
-                                values.put(DatabaseHelper.KEY_SMALL_THUMBNAIL, book.getSmallThumbnail());
-                                values.put(DatabaseHelper.KEY_THUMBNAIL, book.getThumbnail());
-                                values.put(DatabaseHelper.KEY_LANGUAGE, book.getLanguage());
-
-                                getActivity().getContentResolver().insert(BookContentProvider.CONTENT_URI, values);
-
-                                Snackbar.make(view, "Book added to library!", Snackbar.LENGTH_LONG)
-                                        .setAction("Action", null).show();
-
-                                fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like));
-                            }
-                        }
-                    });
+                    itemArray = response.getJSONArray("items");
+                    itemObject = itemArray.getJSONObject(0);
+                    id = itemObject.getString("id");
+                    selfLink = itemObject.getString("selfLink");
+                    volumeInfoObject = itemObject.getJSONObject("volumeInfo");
                 } catch (JSONException e) {
                     e.printStackTrace();
                     progressBar.setVisibility(View.INVISIBLE);
                     showSnackBar("Something went wrong! Book not found.");
                 }
 
+                if (volumeInfoObject != null) {
+                    try {
+                        book.setTitle(volumeInfoObject.getString("title"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        book.setTitle("Not found");
+                    }
+
+                    String authors = "";
+                    try {
+                        JSONArray authorsArray = volumeInfoObject.getJSONArray("authors");
+                        if (authorsArray.length() == 1) {
+                            authors = authorsArray.getString(0);
+                        } else {
+                            for (int i = 0; i < authorsArray.length(); i++) {
+                                if (i != authorsArray.length())
+                                    authors += authorsArray.getString(i) + ", ";
+                                else authors += authorsArray.getString(i) + ".";
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        authors = "Not found";
+                    } finally {
+                        book.setAuthors(authors);
+                    }
+
+                    try {
+                        book.setPublisher(volumeInfoObject.getString("publisher"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        book.setPublisher("Not found");
+                    }
+
+
+                    try {
+                        book.setPublishedDate(volumeInfoObject.getString("publishedDate"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        book.setPublishedDate("Not found");
+                    }
+
+                    try {
+                        book.setDescription(volumeInfoObject.getString("description"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        book.setDescription("Not found");
+                    }
+
+                    try {
+                        book.setPageCount(volumeInfoObject.getString("pageCount"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        book.setPageCount("Not found");
+                    }
+
+
+                    String categories = "";
+                    try {
+                        JSONArray categoriesArray = volumeInfoObject.getJSONArray("categories");
+
+                        if (categoriesArray.length() == 1) {
+                            categories = categoriesArray.getString(0);
+                        } else {
+                            for (int i = 0; i < categoriesArray.length(); i++) {
+                                if (i != categoriesArray.length())
+                                    categories += categoriesArray.getString(i) + ", ";
+                                else categories += categoriesArray.getString(i) + ".";
+                            }
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        categories = "Not found";
+                    } finally {
+                        book.setCategories(categories);
+                    }
+
+                    try {
+                        book.setAverageRating(volumeInfoObject.getString("averageRating"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        book.setAverageRating("Not found");
+                    }
+                    try {
+                        book.setRatingsCount(volumeInfoObject.getString("ratingsCount"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        book.setRatingsCount("Not found");
+                    }
+
+
+                    JSONObject imageLinksObject;
+                    try {
+                        imageLinksObject = volumeInfoObject.getJSONObject("imageLinks");
+                        book.setSmallThumbnail(imageLinksObject.getString("smallThumbnail"));
+                        book.setThumbnail(imageLinksObject.getString("thumbnail"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        book.setSmallThumbnail("null");
+                        book.setThumbnail("null");
+                    }
+
+                    try {
+                        book.setLanguage(volumeInfoObject.getString("language"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        book.setLanguage("Not found");
+                    }
+
+                }
+                book.setId(id);
+                book.setSelfLink(selfLink);
+
+                mAdapter = new BookDataAdapter(book, getActivity());
+                mLayoutManager = new LinearLayoutManager(getActivity());
+                mRecyclerView.setAdapter(mAdapter);
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setVisibility(View.VISIBLE);
+
+                boolean isBookInDB = ContentProviderHelperMethods
+                        .isBookInDatabase(getActivity(),
+                                String.valueOf(book.getId()));
+
+                if (isBookInDB) {
+                    fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like));
+                } else {
+                    fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like_outline));
+                }
+
+                fab.show();
+
+                fab.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        boolean isBookInDB = ContentProviderHelperMethods
+                                .isBookInDatabase(getActivity(),
+                                        String.valueOf(book.getId()));
+                        if (isBookInDB) {
+                            Uri contentUri = BookContentProvider.CONTENT_URI;
+                            getActivity().getContentResolver().delete(contentUri, "id=?", new String[]{String.valueOf(book.getId())});
+                            Snackbar.make(view, "Book removed from library!", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                            fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like_outline));
+
+                        } else {
+                            ContentValues values = new ContentValues();
+                            values.put(DatabaseHelper.KEY_ID, book.getId());
+                            values.put(DatabaseHelper.KEY_SELF_LINK, book.getTitle());
+                            values.put(DatabaseHelper.KEY_TITLE, book.getTitle());
+                            values.put(DatabaseHelper.KEY_AUTHORS, book.getAuthors());
+                            values.put(DatabaseHelper.KEY_PUBLISHER, book.getPublisher());
+                            values.put(DatabaseHelper.KEY_PUBLISH_DATE, book.getPublishedDate());
+                            values.put(DatabaseHelper.KEY_DESCRIPTION, book.getDescription());
+                            values.put(DatabaseHelper.KEY_PAGE_COUNT, book.getPageCount());
+                            values.put(DatabaseHelper.KEY_CATEGORIES, book.getCategories());
+                            values.put(DatabaseHelper.KEY_AVERAGE_RATING, book.getAverageRating());
+                            values.put(DatabaseHelper.KEY_RATINGS_COUNT, book.getRatingsCount());
+                            values.put(DatabaseHelper.KEY_SMALL_THUMBNAIL, book.getSmallThumbnail());
+                            values.put(DatabaseHelper.KEY_THUMBNAIL, book.getThumbnail());
+                            values.put(DatabaseHelper.KEY_LANGUAGE, book.getLanguage());
+
+                            getActivity().getContentResolver().insert(BookContentProvider.CONTENT_URI, values);
+
+                            Snackbar.make(view, "Book added to library!", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+
+                            fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like));
+                        }
+                    }
+                });
             }
         }, new Response.ErrorListener() {
             @Override
