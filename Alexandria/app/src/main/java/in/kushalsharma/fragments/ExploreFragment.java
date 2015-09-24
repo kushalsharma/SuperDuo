@@ -2,6 +2,7 @@ package in.kushalsharma.fragments;
 
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -15,7 +16,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,18 +61,49 @@ public class ExploreFragment extends Fragment {
 
     private ProgressBar progressBar;
 
+    private Context context;
+
+    private String startText = "";
+
     public ExploreFragment() {
         // Required empty public constructor
     }
 
+    public static ExploreFragment newInstance() {
+        ExploreFragment fragmentDemo = new ExploreFragment();
+        Bundle args = new Bundle();
+        fragmentDemo.setArguments(args);
+        return fragmentDemo;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(context.getString(R.string.key_isbn), searchText.getText().toString());
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            startText = savedInstanceState.getString(context.getString(R.string.key_isbn));
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         View v = inflater.inflate(R.layout.fragment_explore, container, false);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        toolbar.setTitle(getActivity().getResources().getString(R.string.add_book));
+        toolbar.setTitle(context.getResources().getString(R.string.add_book));
 
         toolbar.setNavigationIcon(R.drawable.ic_menu);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -84,6 +115,7 @@ public class ExploreFragment extends Fragment {
             }
         });
 
+
         fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.hide();
 
@@ -91,8 +123,9 @@ public class ExploreFragment extends Fragment {
         progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
 
         searchText = (EditText) v.findViewById(R.id.isbn_input);
-        scanButton = (ImageButton) v.findViewById(R.id.scan_button);
+        searchText.setText(startText);
 
+        scanButton = (ImageButton) v.findViewById(R.id.scan_button);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,22 +146,17 @@ public class ExploreFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (mRecyclerView.getVisibility() == View.VISIBLE) {
-                    mRecyclerView.setVisibility(View.INVISIBLE);
-                }
-                if (fab.isShown()) {
-                    fab.hide();
-                }
                 String ean = s.toString();
                 //catch isbn10 numbers
                 if (ean.length() == 10 && !ean.startsWith("978")) {
                     ean = "978" + ean;
                 }
                 if (ean.length() == 13) {
-                    getBookData("https://www.googleapis.com/books/v1/volumes?q=isbn:" + ean);
+                    getBookData(context.getString(R.string.key_google_api_url) + ean);
                 }
             }
         });
+
         return v;
     }
 
@@ -148,28 +176,28 @@ public class ExploreFragment extends Fragment {
                 String selfLink = null;
                 JSONObject volumeInfoObject = null;
                 try {
-                    itemArray = response.getJSONArray("items");
+                    itemArray = response.getJSONArray(context.getString(R.string.key_items));
                     itemObject = itemArray.getJSONObject(0);
-                    id = itemObject.getString("id");
-                    selfLink = itemObject.getString("selfLink");
-                    volumeInfoObject = itemObject.getJSONObject("volumeInfo");
+                    id = itemObject.getString(context.getString(R.string.key_id));
+                    selfLink = itemObject.getString(context.getString(R.string.key_self_link));
+                    volumeInfoObject = itemObject.getJSONObject(context.getString(R.string.key_volume_info));
                 } catch (JSONException e) {
                     e.printStackTrace();
                     progressBar.setVisibility(View.INVISIBLE);
-                    showSnackBar("Something went wrong! Book not found.");
+                    showSnackBar(context.getString(R.string.book_not_found_text));
                 }
 
                 if (volumeInfoObject != null) {
                     try {
-                        book.setTitle(volumeInfoObject.getString("title"));
+                        book.setTitle(volumeInfoObject.getString(context.getString(R.string.key_title)));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        book.setTitle("Not found");
+                        book.setTitle(context.getString(R.string.not_found_text));
                     }
 
                     String authors = "";
                     try {
-                        JSONArray authorsArray = volumeInfoObject.getJSONArray("authors");
+                        JSONArray authorsArray = volumeInfoObject.getJSONArray(context.getString(R.string.key_authors));
                         if (authorsArray.length() == 1) {
                             authors = authorsArray.getString(0);
                         } else {
@@ -181,44 +209,44 @@ public class ExploreFragment extends Fragment {
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        authors = "Not found";
+                        authors = context.getString(R.string.not_found_text);
                     } finally {
                         book.setAuthors(authors);
                     }
 
                     try {
-                        book.setPublisher(volumeInfoObject.getString("publisher"));
+                        book.setPublisher(volumeInfoObject.getString(context.getString(R.string.key_publisher)));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        book.setPublisher("Not found");
+                        book.setPublisher(context.getString(R.string.not_found_text));
                     }
 
 
                     try {
-                        book.setPublishedDate(volumeInfoObject.getString("publishedDate"));
+                        book.setPublishedDate(volumeInfoObject.getString(context.getString(R.string.key_publish_date)));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        book.setPublishedDate("Not found");
+                        book.setPublishedDate(context.getString(R.string.not_found_text));
                     }
 
                     try {
-                        book.setDescription(volumeInfoObject.getString("description"));
+                        book.setDescription(volumeInfoObject.getString(context.getString(R.string.key_description)));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        book.setDescription("Not found");
+                        book.setDescription(context.getString(R.string.not_found_text));
                     }
 
                     try {
-                        book.setPageCount(volumeInfoObject.getString("pageCount"));
+                        book.setPageCount(volumeInfoObject.getString(context.getString(R.string.key_page_count)));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        book.setPageCount("Not found");
+                        book.setPageCount(context.getString(R.string.not_found_text));
                     }
 
 
                     String categories = "";
                     try {
-                        JSONArray categoriesArray = volumeInfoObject.getJSONArray("categories");
+                        JSONArray categoriesArray = volumeInfoObject.getJSONArray(context.getString(R.string.key_categories));
 
                         if (categoriesArray.length() == 1) {
                             categories = categoriesArray.getString(0);
@@ -232,61 +260,61 @@ public class ExploreFragment extends Fragment {
 
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        categories = "Not found";
+                        categories = context.getString(R.string.not_found_text);
                     } finally {
                         book.setCategories(categories);
                     }
 
                     try {
-                        book.setAverageRating(volumeInfoObject.getString("averageRating"));
+                        book.setAverageRating(volumeInfoObject.getString(context.getString(R.string.key_avg_rating)));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        book.setAverageRating("Not found");
+                        book.setAverageRating(context.getString(R.string.not_found_text));
                     }
                     try {
-                        book.setRatingsCount(volumeInfoObject.getString("ratingsCount"));
+                        book.setRatingsCount(volumeInfoObject.getString(context.getString(R.string.key_ratings_count)));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        book.setRatingsCount("Not found");
+                        book.setRatingsCount(context.getString(R.string.not_found_text));
                     }
 
 
                     JSONObject imageLinksObject;
                     try {
-                        imageLinksObject = volumeInfoObject.getJSONObject("imageLinks");
-                        book.setSmallThumbnail(imageLinksObject.getString("smallThumbnail"));
-                        book.setThumbnail(imageLinksObject.getString("thumbnail"));
+                        imageLinksObject = volumeInfoObject.getJSONObject(context.getString(R.string.key_image_links));
+                        book.setSmallThumbnail(imageLinksObject.getString(context.getString(R.string.key_small_thumbnail)));
+                        book.setThumbnail(imageLinksObject.getString(context.getString(R.string.key_thumbnail)));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        book.setSmallThumbnail("null");
-                        book.setThumbnail("null");
+                        book.setSmallThumbnail(context.getString(R.string.empty));
+                        book.setThumbnail(context.getString(R.string.empty));
                     }
 
                     try {
-                        book.setLanguage(volumeInfoObject.getString("language"));
+                        book.setLanguage(volumeInfoObject.getString(context.getString(R.string.key_language)));
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        book.setLanguage("Not found");
+                        book.setLanguage(context.getString(R.string.not_found_text));
                     }
 
                 }
                 book.setId(id);
                 book.setSelfLink(selfLink);
 
-                mAdapter = new BookDataAdapter(book, getActivity());
-                mLayoutManager = new LinearLayoutManager(getActivity());
+                mAdapter = new BookDataAdapter(book, context);
+                mLayoutManager = new LinearLayoutManager(context);
                 mRecyclerView.setAdapter(mAdapter);
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 mRecyclerView.setVisibility(View.VISIBLE);
 
                 boolean isBookInDB = ContentProviderHelperMethods
-                        .isBookInDatabase(getActivity(),
+                        .isBookInDatabase(context,
                                 String.valueOf(book.getId()));
 
                 if (isBookInDB) {
-                    fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like));
+                    fab.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_like));
                 } else {
-                    fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like_outline));
+                    fab.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_like_outline));
                 }
 
                 fab.show();
@@ -295,14 +323,14 @@ public class ExploreFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         boolean isBookInDB = ContentProviderHelperMethods
-                                .isBookInDatabase(getActivity(),
+                                .isBookInDatabase(context,
                                         String.valueOf(book.getId()));
                         if (isBookInDB) {
                             Uri contentUri = BookContentProvider.CONTENT_URI;
-                            getActivity().getContentResolver().delete(contentUri, "id=?", new String[]{String.valueOf(book.getId())});
-                            Snackbar.make(view, "Book removed from library!", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
-                            fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like_outline));
+                            context.getContentResolver().delete(contentUri, "id=?", new String[]{String.valueOf(book.getId())});
+                            Snackbar.make(view, R.string.book_remove_text, Snackbar.LENGTH_LONG)
+                                    .setAction(context.getString(R.string.action), null).show();
+                            fab.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_like_outline));
 
                         } else {
                             ContentValues values = new ContentValues();
@@ -321,12 +349,12 @@ public class ExploreFragment extends Fragment {
                             values.put(DatabaseHelper.KEY_THUMBNAIL, book.getThumbnail());
                             values.put(DatabaseHelper.KEY_LANGUAGE, book.getLanguage());
 
-                            getActivity().getContentResolver().insert(BookContentProvider.CONTENT_URI, values);
+                            context.getContentResolver().insert(BookContentProvider.CONTENT_URI, values);
 
-                            Snackbar.make(view, "Book added to library!", Snackbar.LENGTH_LONG)
-                                    .setAction("Action", null).show();
+                            Snackbar.make(view, context.getString(R.string.book_added_text), Snackbar.LENGTH_LONG)
+                                    .setAction(context.getString(R.string.action), null).show();
 
-                            fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like));
+                            fab.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_like));
                         }
                     }
                 });
@@ -336,7 +364,7 @@ public class ExploreFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 progressBar.setVisibility(View.INVISIBLE);
                 fab.hide();
-                showSnackBar("Something went wrong! Please check the internet connection and try again.");
+                showSnackBar(context.getString(R.string.network_error_text));
             }
         });
 
@@ -347,7 +375,7 @@ public class ExploreFragment extends Fragment {
     public void showSnackBar(String message) {
         final Snackbar mSnackBar = Snackbar.make(mRecyclerView, message, Snackbar.LENGTH_INDEFINITE);
         mSnackBar.setActionTextColor(Color.WHITE);
-        mSnackBar.setAction("Okay", new View.OnClickListener() {
+        mSnackBar.setAction(R.string.ok, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mSnackBar.dismiss();
@@ -366,7 +394,6 @@ public class ExploreFragment extends Fragment {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() == null) {
-                Log.e("Scanned from fragment: ", "cancel");
             } else {
                 searchText.setText(result.getContents());
             }

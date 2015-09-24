@@ -52,4 +52,33 @@
     <string name="a11y_widget_score">Score</string>
     <string name="a11y_widget_match_time">Match time</string>
     <string name="a11y_widget_away_name">Away team name</string>
+    <string name="key_paper_current" translatable="false">Pager_Current</string>
+    <string name="key_selected_match" translatable="false">Selected_match</string>
+    <string name="key_my_main" translatable="false">my_main</string>
+    <string name="key_fixtures" translatable="false">fixtures</string>
+    <string name="key_season_link" translatable="false">http://api.football-data.org/alpha/soccerseasons/</string>
+    <string name="key_match_link" translatable="false">http://api.football-data.org/alpha/fixtures/</string>
+    <string name="key_links" translatable="false">_links</string>
+    <string name="key_soccer_season" translatable="false">soccerseason</string>
+    <string name="key_Self" translatable="false">self</string>
+    <string name="key_date" translatable="false">date</string>
+    <string name="key_home_team_name" translatable="false">homeTeamName</string>
+    <string name="key_away_team_name" translatable="false">awayTeamName</string>
+    <string name="key_result" translatable="false">result</string>
+    <string name="key_goals_home" translatable="false">goalsHomeTeam</string>
+    <string name="key_goals_away" translatable="false">goalsAwayTeam</string>
+    <string name="key_matchday" translatable="false">matchday</string>
+    <string name="key_base_url" translatable="false">http://api.football-data.org/alpha/fixtures</string>
+    <string name="key_time_frame" translatable="false">timeFrame</string>
+    <string name="key_get" translatable="false">GET</string>
+    <string name="key_x_auth_token" translatable="false">X-Auth-Token</string>
+    <string name="key_href" translatable="false">href</string>
+    <string name="seria_a">Seria A</string>
+    <string name="premier_league">Premier League</string>
+    <string name="uefa_league">UEFA Champions League</string>
+    <string name="primear_division">Primera Division</string>
+    <string name="bundasliga">Bundesliga</string>
+    <string name="not_known_league">Not known League Please report</string>
+    <string name="group_stage_matchday_6">Group Stages, Matchday : 6</string>
+    <string name="matchday">"Matchday : "</string>
 </resources>

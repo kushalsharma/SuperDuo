@@ -31,13 +31,28 @@ public class MainActivity extends AppCompatActivity implements ExploreFragment.M
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPreferences = getSharedPreferences(getString(R.string.key_shared_pref), Context.MODE_PRIVATE);
 
-        sharedPreferences = getSharedPreferences("alexandria", Context.MODE_PRIVATE);
+        fragmentScan = ExploreFragment.newInstance();
+        fragmentLibrary = LibraryFragment.newInstance();
+        fragmentAbout = AboutFragment.newInstance();
 
-
-        fragmentScan = new ExploreFragment();
-        fragmentLibrary = new LibraryFragment();
-        fragmentAbout = new AboutFragment();
+        if (savedInstanceState != null) {
+            switch (savedInstanceState.getInt(getString(R.string.key_fragment_state))) {
+                case 0:
+                    fragmentScan = (ExploreFragment) getSupportFragmentManager().getFragment(
+                            savedInstanceState, getString(R.string.key_scan));
+                    break;
+                case 1:
+                    fragmentLibrary = (LibraryFragment) getSupportFragmentManager().getFragment(
+                            savedInstanceState, getString(R.string.key_library));
+                    break;
+                case 2:
+                    fragmentAbout = (AboutFragment) getSupportFragmentManager().getFragment(
+                            savedInstanceState, getString(R.string.key_about));
+                    break;
+            }
+        }
 
         fragmentScan.setMenuCallBack(this);
         fragmentLibrary.setMenuCallBack(this);
@@ -51,9 +66,9 @@ public class MainActivity extends AppCompatActivity implements ExploreFragment.M
         }
 
         if (savedInstanceState != null) {
-            fragmentState = savedInstanceState.getInt("fragmentState");
+            fragmentState = savedInstanceState.getInt(getString(R.string.key_fragment_state));
         } else {
-            fragmentState = sharedPreferences.getInt("startFragmentState", 0);
+            fragmentState = sharedPreferences.getInt(getString(R.string.key_start_fragment_state), 0);
             mDrawerLayout.openDrawer(GravityCompat.START);
         }
 
@@ -81,7 +96,18 @@ public class MainActivity extends AppCompatActivity implements ExploreFragment.M
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("fragmentState", fragmentState);
+        outState.putInt(getString(R.string.key_fragment_state), fragmentState);
+        switch (fragmentState) {
+            case 0:
+                getSupportFragmentManager().putFragment(outState, getString(R.string.key_scan), fragmentScan);
+                break;
+            case 1:
+                getSupportFragmentManager().putFragment(outState, getString(R.string.key_library), fragmentLibrary);
+                break;
+            case 2:
+                getSupportFragmentManager().putFragment(outState, getString(R.string.key_about), fragmentAbout);
+                break;
+        }
     }
 
 

@@ -27,7 +27,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="16dp"
-        android:text="Title"
+        android:text="@string/title"
         android:textSize="20sp" />
 
     <TextView
@@ -40,7 +40,7 @@
         android:paddingBottom="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:text="Authors" />
+        android:text="@string/authors" />
 
     <TextView
         android:id="@+id/publisher"
@@ -52,7 +52,7 @@
         android:paddingBottom="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:text="Publisher" />
+        android:text="@string/publisher" />
 
     <TextView
         android:id="@+id/publish_date"
@@ -64,7 +64,7 @@
         android:paddingBottom="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:text="Publish Date" />
+        android:text="@string/publish_date" />
 
     <TextView
         android:id="@+id/page_count"
@@ -76,7 +76,7 @@
         android:paddingBottom="4dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:text="Page Count" />
+        android:text="@string/pages" />
 
 
     <TextView
@@ -91,5 +91,5 @@
         android:paddingRight="16dp"
         android:paddingTop="16dp"
         android:layout_marginBottom="16dp"
-        android:text="Description" />
+        android:text="@string/description" />
 </RelativeLayout>

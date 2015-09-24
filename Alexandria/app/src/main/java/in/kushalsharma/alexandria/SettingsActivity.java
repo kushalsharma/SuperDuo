@@ -22,7 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        sharedPreferences = getSharedPreferences("alexandria", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(getString(R.string.key_shared_pref), Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
         ab = getSupportActionBar();
@@ -36,17 +36,17 @@ public class SettingsActivity extends AppCompatActivity {
                 R.array.home_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setSelection(sharedPreferences.getInt("startFragmentState", 0));
+        spinner.setSelection(sharedPreferences.getInt(getString(R.string.key_start_fragment_state), 0));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        editor.putInt("startFragmentState", 0);
+                        editor.putInt(getString(R.string.key_start_fragment_state), 0);
                         editor.apply();
                         break;
                     case 1:
-                        editor.putInt("startFragmentState", 1);
+                        editor.putInt(getString(R.string.key_start_fragment_state), 1);
                         editor.apply();
                         break;
                 }

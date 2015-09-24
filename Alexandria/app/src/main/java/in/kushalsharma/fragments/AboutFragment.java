@@ -23,7 +23,12 @@ public class AboutFragment extends Fragment {
         // Required empty public constructor
     }
 
-
+    public static AboutFragment newInstance() {
+        AboutFragment fragmentDemo = new AboutFragment();
+        Bundle args = new Bundle();
+        fragmentDemo.setArguments(args);
+        return fragmentDemo;
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

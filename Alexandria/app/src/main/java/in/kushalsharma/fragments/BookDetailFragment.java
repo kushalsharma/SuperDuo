@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -26,20 +27,21 @@ import in.kushalsharma.utils.DatabaseHelper;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class BookDetailActivityFragment extends Fragment {
+public class BookDetailFragment extends Fragment {
 
     private Toolbar toolbar;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
+    private CoordinatorLayout coordinatorLayout;
 
     private FloatingActionButton fab;
 
     private Book book;
     private String bookId;
 
-    public BookDetailActivityFragment() {
+    public BookDetailFragment() {
     }
 
     @Override
@@ -48,6 +50,7 @@ public class BookDetailActivityFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_book_detail, container, false);
         toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        coordinatorLayout = (CoordinatorLayout) v.findViewById(R.id.coordinatorLayout);
 
         toolbar.setNavigationIcon(R.drawable.ic_back);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -58,7 +61,7 @@ public class BookDetailActivityFragment extends Fragment {
         });
 
         fab = (FloatingActionButton) v.findViewById(R.id.fab);
-        bookId = getActivity().getIntent().getStringExtra("id");
+        bookId = getActivity().getIntent().getStringExtra(getActivity().getString(R.string.key_id));
 
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_book_detail);
         mLayoutManager = new LinearLayoutManager(getActivity());
@@ -93,8 +96,8 @@ public class BookDetailActivityFragment extends Fragment {
                 if (isBookInDB) {
                     Uri contentUri = BookContentProvider.CONTENT_URI;
                     getActivity().getContentResolver().delete(contentUri, "id=?", new String[]{String.valueOf(book.getId())});
-                    Snackbar.make(view, "Book removed from library!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    Snackbar.make(coordinatorLayout, R.string.book_removed_text, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.action, null).show();
                     fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like_outline));
 
                 } else {
@@ -116,8 +119,8 @@ public class BookDetailActivityFragment extends Fragment {
 
                     getActivity().getContentResolver().insert(BookContentProvider.CONTENT_URI, values);
 
-                    Snackbar.make(view, "Book added to library!", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    Snackbar.make(coordinatorLayout, R.string.book_added_text, Snackbar.LENGTH_LONG)
+                            .setAction(getResources().getString(R.string.action), null).show();
 
                     fab.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_like));
                 }

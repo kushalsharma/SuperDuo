@@ -66,7 +66,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     @Override
                     public void onClick(View v) {
                         Intent mBookDetailIntent = new Intent(mAct, BookDetailActivity.class);
-                        mBookDetailIntent.putExtra("id", mBookList.get(position).getId());
+                        mBookDetailIntent.putExtra(mAct.getString(R.string.key_id), mBookList.get(position).getId());
                         mAct.startActivity(mBookDetailIntent);
                     }
                 });
@@ -80,7 +80,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     @Override
                     public void onClick(View v) {
                         Intent mBookDetailIntent = new Intent(mAct, BookDetailActivity.class);
-                        mBookDetailIntent.putExtra("id", mBookList.get(position).getId());
+                        mBookDetailIntent.putExtra(mAct.getString(R.string.key_id), mBookList.get(position).getId());
                         mAct.startActivity(mBookDetailIntent);
                     }
                 });
@@ -88,7 +88,7 @@ public class FavouriteListAdapter extends RecyclerView.Adapter<RecyclerView.View
                     @Override
                     public void onClick(View v) {
                         Intent mBookDetailIntent = new Intent(mAct, BookDetailActivity.class);
-                        mBookDetailIntent.putExtra("id", mBookList.get(position).getId());
+                        mBookDetailIntent.putExtra(mAct.getString(R.string.key_id), mBookList.get(position).getId());
                         mAct.startActivity(mBookDetailIntent);
                     }
                 });

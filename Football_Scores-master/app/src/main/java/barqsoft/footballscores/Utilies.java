@@ -1,5 +1,7 @@
 package barqsoft.footballscores;
 
+import barqsoft.footballscores.widgets.App;
+
 /**
  * Created by yehya khaled on 3/3/2015.
  */
@@ -13,35 +15,35 @@ public class Utilies {
     public static String getLeague(int league_num) {
         switch (league_num) {
             case SERIE_A:
-                return "Seria A";
+                return App.getContext().getString(R.string.seria_a);
             case PREMIER_LEGAUE:
-                return "Premier League";
+                return App.getContext().getString(R.string.premier_league);
             case CHAMPIONS_LEAGUE:
-                return "UEFA Champions League";
+                return App.getContext().getString(R.string.uefa_league);
             case PRIMERA_DIVISION:
-                return "Primera Division";
+                return App.getContext().getString(R.string.primear_division);
             case BUNDESLIGA:
-                return "Bundesliga";
+                return App.getContext().getString(R.string.bundasliga);
             default:
-                return "Not known League Please report";
+                return App.getContext().getString(R.string.not_known_league);
         }
     }
 
     public static String getMatchDay(int match_day, int league_num) {
         if (league_num == CHAMPIONS_LEAGUE) {
             if (match_day <= 6) {
-                return "Group Stages, Matchday : 6";
+                return App.getContext().getString(R.string.group_stage_matchday_6);
             } else if (match_day == 7 || match_day == 8) {
-                return "First Knockout round";
+                return App.getContext().getString(R.string.first_knockout_round);
             } else if (match_day == 9 || match_day == 10) {
-                return "QuarterFinal";
+                return App.getContext().getString(R.string.quarter_final);
             } else if (match_day == 11 || match_day == 12) {
-                return "SemiFinal";
+                return App.getContext().getString(R.string.semi_final);
             } else {
-                return "Final";
+                return App.getContext().getString(R.string.final_text);
             }
         } else {
-            return "Matchday : " + String.valueOf(match_day);
+            return App.getContext().getString(R.string.matchday) + String.valueOf(match_day);
         }
     }
 

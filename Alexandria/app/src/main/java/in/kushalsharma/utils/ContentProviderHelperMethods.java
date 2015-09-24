@@ -1,6 +1,7 @@
 package in.kushalsharma.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -15,7 +16,7 @@ import in.kushalsharma.models.Book;
 
 public class ContentProviderHelperMethods {
 
-    public static ArrayList<Book> getBookListFromDatabase(Activity mAct) {
+    public static ArrayList<Book> getBookListFromDatabase(Context mAct) {
 
         ArrayList<Book> mBookList = new ArrayList<>();
         Uri contentUri = BookContentProvider.CONTENT_URI;
@@ -45,7 +46,7 @@ public class ContentProviderHelperMethods {
         return mBookList;
     }
 
-    public static boolean isBookInDatabase(Activity mAct, String id) {
+    public static boolean isBookInDatabase(Context mAct, String id) {
 
         ArrayList<Book> list = new ArrayList<>(ContentProviderHelperMethods
                 .getBookListFromDatabase(mAct));

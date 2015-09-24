@@ -35,7 +35,12 @@ public class LibraryFragment extends Fragment {
     public LibraryFragment() {
         // Required empty public constructor
     }
-
+    public static LibraryFragment newInstance() {
+        LibraryFragment fragmentDemo = new LibraryFragment();
+        Bundle args = new Bundle();
+        fragmentDemo.setArguments(args);
+        return fragmentDemo;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

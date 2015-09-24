@@ -13,10 +13,53 @@
     <string name="title_activity_settings">Settings</string>
     <string name="setting">Settings</string>
     <string name="default_screen">Default Home Screen</string>
-
     <string name="about_text">This application gets book information from a Google API. All titles, cover images, and author information come from there.
     The original version of this app was built by Sascha Jaschke, and a modified version is given to students in the Udacity Android Nanodegree program. And this is my version of
         the same app! ^.^</string>
+    <string name="by">"by "</string>
+    <string name="publisher">"Publisher - "</string>
+    <string name="publish_date">"Publish Date - "</string>
+    <string name="pages">"Pages - "</string>
+    <string name="overview">"Overview - "</string>
+    <string name="book_removed_text">Book removed from library!</string>
+    <string name="book_added_text">Book added to library!</string>
+    <string name="action">Action</string>
+    <string name="key_id" translatable="false">id</string>
+    <string name="key_isbn" translatable="false">isbn</string>
+    <string name="key_google_api_url" translatable="false">https://www.googleapis.com/books/v1/volumes?q=isbn:</string>
+    <string name="key_items" translatable="false">items</string>
+    <string name="key_self_link" translatable="false">selfLink</string>
+    <string name="key_volume_info" translatable="false">volumeInfo</string>
+    <string name="book_not_found_text">Something went wrong! Book not found.</string>
+    <string name="key_title" translatable="false">title</string>
+    <string name="not_found_text">Not found</string>
+    <string name="key_authors" translatable="false">authors</string>
+    <string name="key_publisher" translatable="false">publisher</string>
+    <string name="key_publish_date" translatable="false">publishedDate</string>
+    <string name="key_description" translatable="false">description</string>
+    <string name="key_page_count" translatable="false">pageCount</string>
+    <string name="key_categories" translatable="false">categories</string>
+    <string name="key_avg_rating" translatable="false">averageRating</string>
+    <string name="key_ratings_count" translatable="false">ratingsCount</string>
+    <string name="key_image_links" translatable="false">imageLinks</string>
+    <string name="key_small_thumbnail" translatable="false">smallThumbnail</string>
+    <string name="key_thumbnail" translatable="false">thumbnail</string>
+    <string name="empty">null</string>
+    <string name="key_language" translatable="false">language</string>
+    <string name="book_remove_text">Book removed from library!</string>
+    <string name="network_error_text">Something went wrong! Please check the internet connection and try again.</string>
+    <string name="ok">Okay</string>
+    <string name="key_shared_pref" translatable="false">alexandria</string>
+    <string name="key_fragment_state" translatable="false">fragmentState</string>
+    <string name="key_scan" translatable="false">scan</string>
+    <string name="key_library" translatable="false">library</string>
+    <string name="key_about" translatable="false">about</string>
+    <string name="key_start_fragment_state" translatable="false">startFragmentState</string>
+    <string name="username">Username</string>
+    <string name="title">Title</string>
+    <string name="authors">Authors</string>
+    <string name="isbn_13">Search ISBN13</string>
+    <string name="description">Description</string>
 
     <string-array name="home_array">
         <item>Scan/Add Book</item>
